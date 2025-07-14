@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Typography */
+h1 {
+  @apply text-2xl font-bold tracking-tight;
+}
+
+h2 {
+  @apply text-xl font-semibold tracking-tight;
+}
+
+h3 {
+  @apply text-lg font-medium;
+}
+
+p {
+  @apply text-base leading-relaxed;
+}
+
+small {
+  @apply text-sm text-gray-500;
+}
+
+/* Links */
+a {
+  @apply text-blue-600 hover:underline;
+}
+
+/* Lists */
+ul {
+  @apply list-disc pl-5;
+}
+
+ol {
+  @apply list-decimal pl-5;
+}
+
+button {
+  @apply text-white p-2 rounded;
+}
+
+button:hover {
+  @apply opacity-80 cursor-pointer;
+}
