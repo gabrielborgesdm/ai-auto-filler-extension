@@ -1,6 +1,41 @@
 # AI AutoFiller
 
+**AI-powered form autofill Chrome extension using Ollama and local language models.**
+It reads the selected input and its parent element, then sends the serialized data to an LLM that predicts the most appropriate value — based on field structure and any user-defined context.
+
+> *This is still a work in progress.*
+> The basic functionality is working, and I’ll be improving it with upcoming commits.
+
+---
+
+### How it works now:
+
+You can click on any input, and the extension will try to guess what should be filled in based on the HTML structure and the context you provide manually.
+
+Right now, you can define dynamic fields directly in the extension — those act as your context for autofilling.
+
+The plan is to later plug in a proper RAG setup, so it can pull real contextual data (like past form entries or user documents) to make smarter predictions.
+
+---
+
+### ✅ What it does so far:
+
+* Lets you create dynamic context fields
+* Allows input selection on any page
+* Sends the selected input and its parent node to a local LLM via Ollama
+* Predicts and autofills the value based on your context
+
+---
+
+### 🔜 What I’m planning to add:
+
+* RAG search for better contextual answers
+* Better UX (alerts, styling, visual feedback when listening for input)
+* A shortcut key to trigger autofill
+* Streaming input generation (token-by-token fill)
+
 # Giving permission to ollama
+It's necessary to allow the ollama server to accept requests from the extension.
 
 ```bash
 sudo systemctl edit ollama.service
