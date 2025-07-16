@@ -1,3 +1,6 @@
+import { EventKeys } from "@/events-keys";
+import Message from "@/utils/message";
+import { Logger } from "@/utils/logger";
 import { useState } from "react";
 
 export default function PopupComponent() {
@@ -6,24 +9,29 @@ export default function PopupComponent() {
     'Click "Auto fill" to start selecting an input field.'
   );
 
+  const logger = new Logger("popup");
+
   const startObserving = async () => {
-    console.log("[CRXJS] Starting observation...");
+    logger.log("Starting observation...");
     try {
       const [tab] = await chrome.tabs.query({
         active: true,
         currentWindow: true,
       });
-      console.log("[CRXJS] Tab:", tab);
+      logger.log("Tab:", tab);
       if (!tab) {
         setStatus("Could not find active tab to observe.");
         return;
       }
-
-      chrome.runtime.sendMessage({ action: "startObserving", tabId: tab.id });
+      logger.log("Tab ID:", tab.id);
+      if (!tab.id) {
+        throw new Error("No tab ID found");
+      }
+      Message.sendRuntimeMessage(tab.id, EventKeys.background_StartedAutoFill);
       setIsObserving(true);
       setStatus("Observing... Click an input field on the page.");
     } catch (e) {
-      console.error("Error starting observation:", e);
+      logger.error("Error starting observation:", e);
       setStatus(
         "Error: Could not connect to the page. Please refresh the page and try again."
       );

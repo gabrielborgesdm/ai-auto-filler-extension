@@ -42,8 +42,6 @@ class Ollama {
 
     Do not use examples from the placeholders to return the response.
 
-  
-
     ### Parent Node:
     ${parent}
 
