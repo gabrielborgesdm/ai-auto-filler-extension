@@ -10,7 +10,11 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@langchain/community": "^0.3.48",
+    "@langchain/core": "^0.3.62",
+    "@langchain/ollama": "^0.2.3",
     "@tailwindcss/vite": "^4.1.11",
+    "langchain": "^0.3.29",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

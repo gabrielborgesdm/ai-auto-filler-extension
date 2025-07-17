@@ -1,12 +1,16 @@
+import { Logger } from "@/utils/logger";
+
 class Ollama {
   private readonly baseUrl: string;
   private readonly model: string;
+  private readonly logger: Logger;
 
   constructor(baseUrl: string, model: string) {
     this.baseUrl = baseUrl;
     this.model = model;
-    console.log("[OLLAMA] baseUrl:", this.baseUrl);
-    console.log("[OLLAMA] model:", this.model);
+    this.logger = new Logger("ollama");
+    this.logger.log("baseUrl:", this.baseUrl);
+    this.logger.log("model:", this.model);
   }
 
   async generate(prompt: string): Promise<string> {
@@ -32,29 +36,37 @@ class Ollama {
     return data.response;
   }
 
-  getAutoFillPrompt(input: string, parent: string, context?: string): string {
-    let prompt = `
-    You are an intelligent form autofill agent.
+  getAutoFillPrompt(question: string, context?: string): string {
+    const prompt = `
+      You are an intelligent form autofill agent.
 
-    You will receive a serialized HTML input element (inputNode) and its parent container (parentNode), along with optional context. Your task is to infer the appropriate value for the input field, either from the context or through your best reasoning based on field names, labels, and structure.
+      You will be provided with a **natural language question** and a **context**. Your sole task is to infer and extract the most appropriate value to autofill for the question from the provided context.
 
-    Respond ONLY with the value to autofill. Do not include explanations.
+      Respond **ONLY** with the extracted value. Do not include any explanations, greetings, or additional text.
+      If the appropriate value cannot be confidently inferred from the given context, respond with **"N/A"**.
+      Do not use placeholder examples (e.g., values present in the question format itself) as actual autofill responses.
 
-    Do not use examples from the placeholders to return the response.
+      ### Question:
+      ${question}
 
-    ### Parent Node:
-    ${parent}
+      ### Context:
+      ${context ? context : "No context provided."}
+    `;
+    this.logger.log("[OLLAMA] Prompt:", prompt);
+    return prompt;
+  }
 
-    ### Input Node:
-    ${input}
+  getInputQuestionPrompt(input: string, parent: string): string {
+    const prompt = `
+      From the provided HTML parent node and input node, extract the most relevant and concise **natural language query** that describes the intended content or purpose of the input field. Prioritize explicit labels, then semantic field names, and finally structural cues. Respond ONLY with this descriptive query.
 
-    ### Context:
-    ${context ? context : "No context provided."}
+      ### Parent Node:
+      ${parent}
 
-    What is the appropriate value to autofill?
-`;
-
-    console.log("[OLLAMA] Prompt:", prompt);
+      ### Input Node:
+      ${input}
+    `;
+    this.logger.log("Input Question Prompt:", prompt);
     return prompt;
   }
 }

@@ -4,6 +4,7 @@ import FieldsStorage from "@/utils/fields-storage";
 import { Logger } from "@/utils/logger";
 import Message from "@/utils/message";
 import Ollama from "@/background/services/ollama";
+import { RagService } from "./services/rag";
 
 const logger = new Logger("background");
 
@@ -17,18 +18,34 @@ async function parseClickedInput(tabId: number, payload: InputData) {
 
   // Get the fields from storage and create a context
   const result = await FieldsStorage.getFields();
-  const context = result
+  const additionalDynamicContext = result
     ?.map((field) => `${field.name}: ${field.value}`)
     .join("\n");
 
-  logger.log("Context:", context);
+  logger.log("Additional Dynamic Context:", additionalDynamicContext);
 
   try {
+    // Generate the natural language query for the input
+    const query = await ollama.generate(
+      ollama.getInputQuestionPrompt(payload.element, payload.parent)
+    );
+    logger.log("Query:", query);
+
+    // Get the context from the documents
+    const context = await new RagService().getContext(
+      undefined,
+      additionalDynamicContext,
+      query
+    );
+
+    logger.log("Context:", context);
+
     // Generate the autofill response
     logger.log("Generating autofill response");
     const response = await ollama.generate(
-      ollama.getAutoFillPrompt(payload.element, payload.parent, context)
+      ollama.getAutoFillPrompt(query, context)
     );
+    logger.log("Response:", response);
 
     if (!response) {
       throw new Error("Could not autofill");
